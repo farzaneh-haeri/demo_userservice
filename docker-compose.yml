@@ -1,0 +1,19 @@
+version: "3.7"
+services:
+  mailhog:
+    container_name: mailhog
+    image: mailhog/mailhog
+    ports:
+    - "1025:1025"
+    hostname: mailhog
+    restart: "on-failure"
+    networks:
+      - stack
+    deploy:
+      resources:
+        limits:
+          memory: 512m
+
+networks:
+  stack:
+    driver: bridge
