@@ -1,4 +1,4 @@
-package com.demo.usermanagementservice.controller.controller;
+package com.demo.usermanagementservice.controller;
 
 import com.demo.usermanagementservice.ApplicationProperties;
 import com.demo.usermanagementservice.EmailServiceApi;

@@ -8,12 +8,34 @@ services:
     hostname: mailhog
     restart: "on-failure"
     networks:
-      - stack
+      - my-network
     deploy:
       resources:
         limits:
           memory: 512m
 
+  email-service:
+    container_name: email-service
+    build:
+      context: ./EmailService
+    ports:
+      - "8082:8082"
+    hostname: email-service
+    restart: "on-failure"
+    networks:
+      - my-network
+
+  user-service:
+    container_name: user-service
+    build:
+      context: ./UserManagementService
+    ports:
+      - "8081:8081"
+    hostname: user-service
+    restart: "on-failure"
+    networks:
+      - my-network
+
 networks:
-  stack:
+  my-network:
     driver: bridge

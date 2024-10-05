@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 
-@FeignClient(name="EmailService")
+@FeignClient(name="email-service", url = "${email.service.url}")
 public interface EmailServiceApi {
     @PostMapping("/api/email/simple/send")
     public void sendTextEmail(@RequestBody EmailDto emailDto, @RequestHeader(HttpHeaders.AUTHORIZATION) String authHeader);

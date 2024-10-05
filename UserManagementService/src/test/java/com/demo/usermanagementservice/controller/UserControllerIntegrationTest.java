@@ -1,5 +1,6 @@
-package com.demo.usermanagementservice.controller.controller;
+package com.demo.usermanagementservice.controller;
 
+import com.demo.usermanagementservice.EmailServiceApi;
 import com.demo.usermanagementservice.dto.UserDto;
 import com.demo.usermanagementservice.dto.UserRegisterDto;
 import com.demo.usermanagementservice.dto.UserUpdateDto;
@@ -41,6 +42,9 @@ public class UserControllerIntegrationTest {
 
     @MockBean
     private UserService userService;
+
+    @MockBean
+    private EmailServiceApi emailServiceApi;
 
     @Value("${user-management-service.user-name}")
     private String username;
@@ -99,7 +103,6 @@ public class UserControllerIntegrationTest {
 
     @Test
     public void testUpdateUser() throws Exception {
-        UserUpdateDto userUpdateDto = new UserUpdateDto(1L, "Alex Updated");
 
         mockMvc.perform(patch("/api/v1/users/update/single")
                         .with(httpBasic(username, password))
