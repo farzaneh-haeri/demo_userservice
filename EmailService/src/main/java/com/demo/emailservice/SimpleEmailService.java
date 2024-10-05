@@ -25,8 +25,8 @@ public class SimpleEmailService implements EmailSender {
             javaMailSender.send(message);
 
             log.info("Welcome email was sent to email address {}", email.getEmailTo());
-        } catch (final Exception exception) {
-            log.error("Welcome email could not be sent to email address {}", email.getEmailTo());
+        } catch (Exception exception) {
+            log.error("Welcome email could not be sent to email address {}", email.getEmailTo(), exception);
         }
     }
 
