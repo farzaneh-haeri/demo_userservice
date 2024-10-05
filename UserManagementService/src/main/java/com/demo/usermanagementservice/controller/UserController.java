@@ -1,15 +1,13 @@
 package com.demo.usermanagementservice.controller;
 
-import com.demo.usermanagementservice.dto.EmailDto;
-import com.demo.usermanagementservice.EmailServiceApi;
 import com.demo.usermanagementservice.ApplicationProperties;
+import com.demo.usermanagementservice.EmailServiceApi;
+import com.demo.usermanagementservice.dto.EmailDto;
 import com.demo.usermanagementservice.dto.UserDto;
 import com.demo.usermanagementservice.dto.UserRegisterDto;
 import com.demo.usermanagementservice.dto.UserUpdateDto;
 import com.demo.usermanagementservice.exception.UserNotFoundException;
-
 import com.demo.usermanagementservice.service.UserService;
-import io.swagger.v3.oas.annotations.Hidden;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -19,8 +17,6 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
-import org.springframework.hateoas.EntityModel;
-import org.springframework.hateoas.server.mvc.WebMvcLinkBuilder;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -64,8 +60,8 @@ public class UserController {
     @ApiResponse(responseCode = "200")
     @ApiResponse(responseCode = "401", description = "Invalid API Credentials", content = @Content)
     @ApiResponse(responseCode = "404", description = "User not found", content = @Content)
-    public ResponseEntity<UserDto> getUser(@NotNull @PathVariable("id") Long id) {
-        return new ResponseEntity<>(findUserById(id), HttpStatus.OK);
+    public UserDto getUser(@NotNull @PathVariable("id") Long id) {
+        return findUserById(id);
     }
 
     @PostMapping
@@ -75,8 +71,8 @@ public class UserController {
     @ApiResponse(responseCode = "401", description = "Invalid API Credentials", content = @Content)
     @ApiResponse(responseCode = "400", description = "At least one id should be provided", content = @Content)
     @ApiResponse(responseCode = "404", description = "There is at least one provided id for which user was not found", content = @Content)
-    public ResponseEntity<List<UserDto>> getUsers(@NotNull @RequestBody List<Long> ids) {
-        return new ResponseEntity<>(userService.getUsers(ids), HttpStatus.OK);
+    public List<UserDto> getUsers(@NotNull @RequestBody List<Long> ids) {
+        return userService.getUsers(ids);
     }
 
     @PostMapping("/register")
@@ -96,53 +92,42 @@ public class UserController {
     }
 
     @PatchMapping("/update/single")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Update single user")
     @ApiResponse(responseCode = "204", description = "Specified user updated")
     @ApiResponse(responseCode = "401", description = "Invalid API Credentials", content = @Content)
-    public ResponseEntity<Void> updateUser(@Valid @RequestBody UserUpdateDto user) {
+    public void updateUser(@Valid @RequestBody UserUpdateDto user) {
         userService.updateUser(user);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @PatchMapping("/update/multiple")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Update single or multiple users specified by id(s)")
     @ApiResponse(responseCode = "204", description = "Specified user(s) updated")
     @ApiResponse(responseCode = "400", description = "Invalid Users", content = @Content)
     @ApiResponse(responseCode = "401", description = "Invalid API Credentials", content = @Content)
-    public ResponseEntity<Void> updateUsers(@NotNull @RequestBody List<UserUpdateDto> users) {
+    public void updateUsers(@NotNull @RequestBody List<UserUpdateDto> users) {
         userService.updateUsers(users);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete single user specified by id")
     @ApiResponse(responseCode = "204", description = "Selected user is deleted")
     @ApiResponse(responseCode = "401", description = "Invalid API Credentials", content = @Content)
-    public ResponseEntity<Void> deleteUser(@NotNull @PathVariable("id") Long id) {
+    public void deleteUser(@NotNull @PathVariable("id") Long id) {
         userService.softDeleteUser(id);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
 
     @DeleteMapping
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @Operation(summary = "Delete single or multiple users specified by id(s)")
     @ApiResponse(responseCode = "204", description = "Selected user(s) are deleted")
     @ApiResponse(responseCode = "400", description = "Invalid User Ids", content = @Content)
     @ApiResponse(responseCode = "401", description = "Invalid API Credentials", content = @Content)
-    public ResponseEntity<Void> deleteUsers(@NotNull @RequestBody List<Long> ids) {
+    public void deleteUsers(@NotNull @RequestBody List<Long> ids) {
         userService.softDeleteUsers(ids);
-        return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
     }
-
-    @Hidden
-    @GetMapping("/hateoas/{id}")
-    public EntityModel<UserDto> getHateoasUser(@PathVariable("id") @NotNull Long id) {
-        final UserDto user = findUserById(id);
-        final EntityModel<UserDto> userEntityModel = EntityModel.of(user);
-        final WebMvcLinkBuilder link = WebMvcLinkBuilder.linkTo(WebMvcLinkBuilder.methodOn(this.getClass()).getAllUsers());
-        userEntityModel.add(link.withRel("all-users"));
-        return userEntityModel;
-    }
-
 
     private UserDto findUserById(Long id) {
         final Optional<UserDto> user = userService.getUser(id);

@@ -23,12 +23,12 @@ public class UserService {
     private final UserRepository userRepository;
 
     public List<UserDto> getAllUsers() {
-        return userRepository.findUsersByArchivedFalse().stream().map(UserService::toDto).collect(Collectors.toList());
+        return userRepository.findUsersByArchivedFalse().stream().map(this::toDto).collect(Collectors.toList());
     }
 
     public Optional<UserDto> getUser(Long id) {
         final Optional<User> user = userRepository.findUserByIdAndArchivedFalse(id);
-        return user.map(UserService::toDto);
+        return user.map(this::toDto);
     }
 
     public List<UserDto> getUsers(List<Long> ids) {
@@ -38,35 +38,32 @@ public class UserService {
         }
 
         final List<User> users = userRepository.findUsersByIdInAndArchivedFalse(ids);
-
         if (users.size() != ids.size()) {
             throw new UserNotFoundException(ids.size() - users.size() + " users were not found");
         }
 
-        return users.stream().map(UserService::toDto).collect(Collectors.toList());
+        return users.stream().map(this::toDto).collect(Collectors.toList());
     }
 
     public UserDto addUser(UserRegisterDto user) {
 
-        if (userRepository.findUserByEmailEqualsIgnoreCase(user.getEmail()) != null) {
+        if (userRepository.findUserByEmailEqualsIgnoreCaseAndArchivedFalse(user.getEmail()) != null) {
             throw new DuplicatedEmailException("User with provided email already exists");
         }
 
-        final User newUser = UserService.toEntity(user);
+        final User newUser = toEntity(user);
         newUser.setArchived(false);
-        return UserService.toDto(userRepository.save(newUser));
+        return toDto(userRepository.save(newUser));
     }
 
     public void updateUser(UserUpdateDto user) {
 
         final Optional<User> userToUpdate = userRepository.findById(user.getId());
-
         if (userToUpdate.isEmpty()) {
             throw new UserNotFoundException("User was not found");
         }
 
         userToUpdate.get().setName(user.getName());
-
         userRepository.save(userToUpdate.get());
     }
 
@@ -77,7 +74,6 @@ public class UserService {
         }
 
         final List<User> usersToUpdate = userRepository.findAllById(users.stream().map(UserUpdateDto::getId).collect(Collectors.toList()));
-
         if (usersToUpdate.size() != users.size()) {
             throw new UserNotFoundException(users.size() - usersToUpdate.size() + " users were not found");
         }
@@ -97,7 +93,6 @@ public class UserService {
         }
 
         final Optional<User> userToDelete = userRepository.findById(id);
-
         if (userToDelete.isEmpty()) {
             throw new UserNotFoundException("User was not found");
         }
@@ -113,7 +108,6 @@ public class UserService {
         }
 
         final List<User> usersToDelete = userRepository.findAllById(userIds);
-
         if (usersToDelete.size() != userIds.size()) {
             throw new UserNotFoundException(userIds.size() - usersToDelete.size() + " users were not found");
         }
@@ -122,15 +116,14 @@ public class UserService {
         userRepository.saveAll(usersToDelete);
     }
 
-    public static UserDto toDto(User entity) {
+    private UserDto toDto(User entity) {
         return new UserDto(
                 entity.getId(),
                 entity.getName(),
-                entity.getEmail(),
-                "To be ignored");
+                entity.getEmail());
     }
 
-    public static User toEntity(UserRegisterDto dto) {
+    private User toEntity(UserRegisterDto dto) {
         return new User(
                 dto.getName(),
                 dto.getEmail());

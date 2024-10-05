@@ -22,7 +22,7 @@ public class UserManagementServiceApplication {
     }
 
     @Bean
-    public OpenApiCustomizer dataApiCustomiser() {
+    public OpenApiCustomizer userManagementApiCustomiser() {
         return openApi -> {
             openApi.info(new Info().title("User Management API"));
 
@@ -30,7 +30,7 @@ public class UserManagementServiceApplication {
 
             openApi.getComponents().addSecuritySchemes(
                     "User Management API Authorisation", new SecurityScheme()
-                            .name("Data API Authorisation")
+                            .name("User Management API Authorisation")
                             .type(SecurityScheme.Type.HTTP)
                             .scheme("basic"));
         };

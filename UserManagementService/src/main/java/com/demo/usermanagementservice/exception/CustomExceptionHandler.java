@@ -1,7 +1,5 @@
 package com.demo.usermanagementservice.exception;
 
-import lombok.AllArgsConstructor;
-import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -13,7 +11,6 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
-import java.util.Objects;
 
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
@@ -26,7 +23,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                         webRequest.getDescription(false),
                         CustomErrorCode.GENERAL.code);
 
-        return new ResponseEntity<>(customExceptionDetail, HttpStatus.INTERNAL_SERVER_ERROR);
+        return ResponseEntity.internalServerError().body(customExceptionDetail);
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -37,7 +34,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                         webRequest.getDescription(false),
                         CustomErrorCode.USER_NOT_FOUND.code);
 
-        return new ResponseEntity<>(customExceptionDetail, HttpStatus.NOT_FOUND);
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(customExceptionDetail);
     }
 
     @ExceptionHandler(BadRequestException.class)
@@ -48,7 +45,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                         webRequest.getDescription(false),
                         CustomErrorCode.BAD_REQUEST.code);
 
-        return new ResponseEntity<>(customExceptionDetail, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(customExceptionDetail);
     }
 
     @ExceptionHandler(DuplicatedEmailException.class)
@@ -59,7 +56,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                         webRequest.getDescription(false),
                         CustomErrorCode.USER_ALREADY_EXIST.code);
 
-        return new ResponseEntity<>(customExceptionDetail, HttpStatus.CONFLICT);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(customExceptionDetail);
     }
 
     @Override
@@ -74,6 +71,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
                         request.getDescription(false),
                         CustomErrorCode.BAD_REQUEST.code);
 
-        return new ResponseEntity<>(customExceptionDetail, HttpStatus.BAD_REQUEST);
+        return ResponseEntity.badRequest().body(customExceptionDetail);
     }
 }

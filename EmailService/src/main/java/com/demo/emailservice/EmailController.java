@@ -1,5 +1,6 @@
 package com.demo.emailservice;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,7 +14,7 @@ public class EmailController {
     private SimpleEmailService simpleEmailService;
 
     @PostMapping("/simple/send")
-    public void sendTextEmail(@RequestBody EmailDto emailDto) {
+    public void sendTextEmail(@Valid @RequestBody EmailDto emailDto) {
         simpleEmailService.sendMail(emailDto);
     }
 
