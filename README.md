@@ -1,6 +1,6 @@
 # User Management API
 
-Welcome to the User management API repository! This API allows you to easily it can also edit/read/(soft) delete single or multiple user(s).
+Welcome to the User management API repository! This API allows you to easily register a user, edit/read/(soft) delete single or multiple user(s).
 
 ## Getting Started
 
@@ -28,8 +28,15 @@ git clone https://github.com/farzaneh-haeri/demo_userservice.git
     ```bash
     ./run_services.sh
     ```
+
+    or alternatively run the following commands:
+
+     ```bash
+    docker-compose build
+    docker-compose up
+    ```
     
-3. Once the services are up and running, you can access the Swagger UI at:
+4. Once the services are up and running, you can access the Swagger UI at:
 
     ```bash
     http://localhost:8081/swagger-ui/index.html
@@ -40,9 +47,4 @@ git clone https://github.com/farzaneh-haeri/demo_userservice.git
    
     Password: pass
    
-    Alternatively, you can use the provided curl commands with the following authorization header:
-
-   ```bash
-    Authorization: Basic ZGVtbzpwYXNz
-    ```
 
