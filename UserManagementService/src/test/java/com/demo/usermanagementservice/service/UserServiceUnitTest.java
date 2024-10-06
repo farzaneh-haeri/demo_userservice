@@ -98,7 +98,7 @@ public class UserServiceUnitTest {
     public void testAddUser() {
         UserRegisterDto userRegisterDto = new UserRegisterDto("Alex", "alex@demo.com");
         User newUser = new User("Alex", "alex@demo.com");
-        when(userRepository.findUserByEmailEqualsIgnoreCase("alex@demo.com")).thenReturn(null);
+        when(userRepository.findUserByEmailEqualsIgnoreCaseAndArchivedFalse("alex@demo.com")).thenReturn(null);
         when(userRepository.save(any(User.class))).thenReturn(newUser);
 
         UserDto result = userService.addUser(userRegisterDto);
@@ -110,7 +110,7 @@ public class UserServiceUnitTest {
     public void testAddUser_DuplicatedEmail() {
         UserRegisterDto userRegisterDto = new UserRegisterDto("Alex", "alex@demo.com");
         User existingUser = new User("Alex", "alex@demo.com");
-        when(userRepository.findUserByEmailEqualsIgnoreCase("alex@demo.com")).thenReturn(existingUser);
+        when(userRepository.findUserByEmailEqualsIgnoreCaseAndArchivedFalse("alex@demo.com")).thenReturn(existingUser);
 
         Exception exception = assertThrows(DuplicatedEmailException.class, () -> userService.addUser(userRegisterDto));
         assertEquals("User with provided email already exists", exception.getMessage());
